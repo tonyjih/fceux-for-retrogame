@@ -31,16 +31,16 @@ extern uint32 palettetranslate[65536 * 4];
 	palette is taken from palettetranslate[]
 	no pitch corrections are made!
 */
-
+#define RS97_SCREEN_HEIGHT 480
 void upscale_320x240(uint32 *dst, uint8 *src)
 {
-	int midh = 240 * 3 / 4;
+	int midh = RS97_SCREEN_HEIGHT * 3 / 4;
 	int Eh = 0;
 	int source = 0;
 	int dh = 0;
 	int y, x;
 
-	for (y = 0; y < 240; y++)
+	for (y = 0; y < RS97_SCREEN_HEIGHT; y++)
 	{
 		source = dh * 256;
 
@@ -72,7 +72,7 @@ void upscale_320x240(uint32 *dst, uint8 *src)
 			source += 8;
 
 		}
-		Eh += 224; if(Eh >= 240) { Eh -= 240; dh++; }
+		Eh += 224; if(Eh >= RS97_SCREEN_HEIGHT) { Eh -= RS97_SCREEN_HEIGHT; dh++; }
 	}
 }
 
@@ -359,7 +359,7 @@ void upscale_320x240_bilinearish_clip(uint32_t* dst, uint8 *src, int width)
 	for (BlockY = 0; BlockY < 14; BlockY++)
 	{
 		BlockSrc = Src16 + BlockY * 256 * 16;
-		BlockDst = Dst16 + BlockY * 320 * 17;
+		BlockDst = Dst16 + BlockY * 320 * 34;
 		for (BlockX = 0; BlockX < 80; BlockX++)
 		{
 			/* Horizontally:
@@ -400,144 +400,144 @@ void upscale_320x240_bilinearish_clip(uint32_t* dst, uint8 *src, int width)
 
 			// -- Row 2 --
 			uint16_t  _4 = palettetranslate[*(BlockSrc + 256 *  1     + 8)];
-			*(BlockDst + 320 *  1 + 0) = _4;
+			*(BlockDst + 320 *  2 + 0) = _4;
 			uint16_t  _5 = palettetranslate[*(BlockSrc + 256 *  1 + 1 + 8)];
-			*(BlockDst + 320 *  1 + 1) = Weight1_3( _4,  _5);
+			*(BlockDst + 320 *  2 + 1) = Weight1_3( _4,  _5);
 			uint16_t  _6 = palettetranslate[*(BlockSrc + 256 *  1 + 2 + 8)];
-			*(BlockDst + 320 *  1 + 2) = Weight3_1( _5,  _6);
-			*(BlockDst + 320 *  1 + 3) = _6;
+			*(BlockDst + 320 *  2 + 2) = Weight3_1( _5,  _6);
+			*(BlockDst + 320 *  2 + 3) = _6;
 
 			// -- Row 3 --
 			uint16_t  _7 = palettetranslate[*(BlockSrc + 256 *  2     + 8)];
-			*(BlockDst + 320 *  2 + 0) = _7;
+			*(BlockDst + 320 *  4 + 0) = _7;
 			uint16_t  _8 = palettetranslate[*(BlockSrc + 256 *  2 + 1 + 8)];
-			*(BlockDst + 320 *  2 + 1) = Weight1_3( _7, _8);
+			*(BlockDst + 320 *  4 + 1) = Weight1_3( _7, _8);
 			uint16_t  _9 = palettetranslate[*(BlockSrc + 256 *  2 + 2 + 8)];
-			*(BlockDst + 320 *  2 + 2) = Weight3_1(_8, _9);
-			*(BlockDst + 320 *  2 + 3) = _9;
+			*(BlockDst + 320 *  4 + 2) = Weight3_1(_8, _9);
+			*(BlockDst + 320 *  4 + 3) = _9;
 
 			// -- Row 4 --
 			uint16_t _10 = palettetranslate[*(BlockSrc + 256 *  3     + 8)];
-			*(BlockDst + 320 *  3 + 0) = Weight1_3( _7, _10);
+			*(BlockDst + 320 *  6 + 0) = Weight1_3( _7, _10);
 			uint16_t _11 = palettetranslate[*(BlockSrc + 256 *  3 + 1 + 8)];
-			*(BlockDst + 320 *  3 + 1) = Weight1_3(Weight1_3( _7, _8), Weight1_3(_10, _11));
+			*(BlockDst + 320 *  6 + 1) = Weight1_3(Weight1_3( _7, _8), Weight1_3(_10, _11));
 			uint16_t _12 = palettetranslate[*(BlockSrc + 256 *  3 + 2 + 8)];
-			*(BlockDst + 320 *  3 + 2) = Weight1_3(Weight3_1(_8, _9), Weight3_1(_11, _12));
-			*(BlockDst + 320 *  3 + 3) = Weight1_3(_9, _12);
+			*(BlockDst + 320 *  6 + 2) = Weight1_3(Weight3_1(_8, _9), Weight3_1(_11, _12));
+			*(BlockDst + 320 *  6 + 3) = Weight1_3(_9, _12);
 
 			// -- Row 5 --
 			uint16_t _13 = palettetranslate[*(BlockSrc + 256 *  4     + 8)];
-			*(BlockDst + 320 *  4 + 0) = Weight1_3(_10, _13);
+			*(BlockDst + 320 *  8 + 0) = Weight1_3(_10, _13);
 			uint16_t _14 = palettetranslate[*(BlockSrc + 256 *  4 + 1 + 8)];
-			*(BlockDst + 320 *  4 + 1) = Weight1_3(Weight1_3(_10, _11), Weight1_3(_13, _14));
+			*(BlockDst + 320 *  8 + 1) = Weight1_3(Weight1_3(_10, _11), Weight1_3(_13, _14));
 			uint16_t _15 = palettetranslate[*(BlockSrc + 256 *  4 + 2 + 8)];
-			*(BlockDst + 320 *  4 + 2) = Weight1_3(Weight3_1(_11, _12), Weight3_1(_14, _15));
-			*(BlockDst + 320 *  4 + 3) = Weight1_3(_12, _15);
+			*(BlockDst + 320 *  8 + 2) = Weight1_3(Weight3_1(_11, _12), Weight3_1(_14, _15));
+			*(BlockDst + 320 *  8 + 3) = Weight1_3(_12, _15);
 
 			// -- Row 6 --
 			uint16_t _16 = palettetranslate[*(BlockSrc + 256 *  5     + 8)];
-			*(BlockDst + 320 *  5 + 0) = Weight1_3(_13, _16);
+			*(BlockDst + 320 *  10 + 0) = Weight1_3(_13, _16);
 			uint16_t _17 = palettetranslate[*(BlockSrc + 256 *  5 + 1 + 8)];
-			*(BlockDst + 320 *  5 + 1) = Weight1_3(Weight1_3(_13, _14), Weight1_3(_16, _17));
+			*(BlockDst + 320 *  10 + 1) = Weight1_3(Weight1_3(_13, _14), Weight1_3(_16, _17));
 			uint16_t _18 = palettetranslate[*(BlockSrc + 256 *  5 + 2 + 8)];
-			*(BlockDst + 320 *  5 + 2) = Weight1_3(Weight3_1(_14, _15), Weight3_1(_17, _18));
-			*(BlockDst + 320 *  5 + 3) = Weight1_3(_15, _18);
+			*(BlockDst + 320 *  10 + 2) = Weight1_3(Weight3_1(_14, _15), Weight3_1(_17, _18));
+			*(BlockDst + 320 *  10 + 3) = Weight1_3(_15, _18);
 
 			// -- Row 7 --
 			uint16_t _19 = palettetranslate[*(BlockSrc + 256 *  6     + 8)];
-			*(BlockDst + 320 *  6 + 0) = Weight1_3(_16, _19);
+			*(BlockDst + 320 *  12 + 0) = Weight1_3(_16, _19);
 			uint16_t _20 = palettetranslate[*(BlockSrc + 256 *  6 + 1 + 8)];
-			*(BlockDst + 320 *  6 + 1) = Weight1_3(Weight1_3(_16, _17), Weight1_3(_19, _20));
+			*(BlockDst + 320 *  12 + 1) = Weight1_3(Weight1_3(_16, _17), Weight1_3(_19, _20));
 			uint16_t _21 = palettetranslate[*(BlockSrc + 256 *  6 + 2 + 8)];
-			*(BlockDst + 320 *  6 + 2) = Weight1_3(Weight3_1(_17, _18), Weight3_1(_20, _21));
-			*(BlockDst + 320 *  6 + 3) = Weight1_3(_18, _21);
+			*(BlockDst + 320 *  12 + 2) = Weight1_3(Weight3_1(_17, _18), Weight3_1(_20, _21));
+			*(BlockDst + 320 *  12 + 3) = Weight1_3(_18, _21);
 
 			// -- Row 8 --
 			uint16_t _22 = palettetranslate[*(BlockSrc + 256 *  7     + 8)];
-			*(BlockDst + 320 *  7 + 0) = Weight1_3(_19, _22);
+			*(BlockDst + 320 *  14 + 0) = Weight1_3(_19, _22);
 			uint16_t _23 = palettetranslate[*(BlockSrc + 256 *  7 + 1 + 8)];
-			*(BlockDst + 320 *  7 + 1) = Weight1_3(Weight1_3(_19, _20), Weight1_3(_22, _23));
+			*(BlockDst + 320 *  14 + 1) = Weight1_3(Weight1_3(_19, _20), Weight1_3(_22, _23));
 			uint16_t _24 = palettetranslate[*(BlockSrc + 256 *  7 + 2 + 8)];
-			*(BlockDst + 320 *  7 + 2) = Weight1_3(Weight3_1(_20, _21), Weight3_1(_23, _24));
-			*(BlockDst + 320 *  7 + 3) = Weight1_3(_21, _24);
+			*(BlockDst + 320 *  14 + 2) = Weight1_3(Weight3_1(_20, _21), Weight3_1(_23, _24));
+			*(BlockDst + 320 *  14 + 3) = Weight1_3(_21, _24);
 
 			// -- Row 9 --
 			uint16_t _25 = palettetranslate[*(BlockSrc + 256 *  8     + 8)];
-			*(BlockDst + 320 *  8 + 0) = Weight1_1(_22, _25);
+			*(BlockDst + 320 *  16 + 0) = Weight1_1(_22, _25);
 			uint16_t _26 = palettetranslate[*(BlockSrc + 256 *  8 + 1 + 8)];
-			*(BlockDst + 320 *  8 + 1) = Weight1_1(Weight1_3(_22, _23), Weight1_3(_25, _26));
+			*(BlockDst + 320 *  16 + 1) = Weight1_1(Weight1_3(_22, _23), Weight1_3(_25, _26));
 			uint16_t _27 = palettetranslate[*(BlockSrc + 256 *  8 + 2 + 8)];
-			*(BlockDst + 320 *  8 + 2) = Weight1_1(Weight3_1(_23, _24), Weight3_1(_26, _27));
-			*(BlockDst + 320 *  8 + 3) = Weight1_1(_24, _27);
+			*(BlockDst + 320 *  16 + 2) = Weight1_1(Weight3_1(_23, _24), Weight3_1(_26, _27));
+			*(BlockDst + 320 *  16 + 3) = Weight1_1(_24, _27);
 
 			// -- Row 10 --
 			uint16_t _28 = palettetranslate[*(BlockSrc + 256 *  9     + 8)];
-			*(BlockDst + 320 *  9 + 0) = Weight3_1(_25, _28);
+			*(BlockDst + 320 *  18 + 0) = Weight3_1(_25, _28);
 			uint16_t _29 = palettetranslate[*(BlockSrc + 256 *  9 + 1 + 8)];
-			*(BlockDst + 320 *  9 + 1) = Weight3_1(Weight1_3(_25, _26), Weight1_3(_28, _29));
+			*(BlockDst + 320 *  18 + 1) = Weight3_1(Weight1_3(_25, _26), Weight1_3(_28, _29));
 			uint16_t _30 = palettetranslate[*(BlockSrc + 256 *  9 + 2 + 8)];
-			*(BlockDst + 320 *  9 + 2) = Weight3_1(Weight3_1(_26, _27), Weight3_1(_29, _30));
-			*(BlockDst + 320 *  9 + 3) = Weight3_1(_27, _30);
+			*(BlockDst + 320 *  18 + 2) = Weight3_1(Weight3_1(_26, _27), Weight3_1(_29, _30));
+			*(BlockDst + 320 *  18 + 3) = Weight3_1(_27, _30);
 
 			// -- Row 11 --
 			uint16_t _31 = palettetranslate[*(BlockSrc + 256 * 10     + 8)];
-			*(BlockDst + 320 * 10 + 0) = Weight3_1(_28, _31);
+			*(BlockDst + 320 * 20 + 0) = Weight3_1(_28, _31);
 			uint16_t _32 = palettetranslate[*(BlockSrc + 256 * 10 + 1 + 8)];
-			*(BlockDst + 320 * 10 + 1) = Weight3_1(Weight1_3(_28, _29), Weight1_3(_31, _32));
+			*(BlockDst + 320 * 20 + 1) = Weight3_1(Weight1_3(_28, _29), Weight1_3(_31, _32));
 			uint16_t _33 = palettetranslate[*(BlockSrc + 256 * 10 + 2 + 8)];
-			*(BlockDst + 320 * 10 + 2) = Weight3_1(Weight3_1(_29, _30), Weight3_1(_32, _33));
-			*(BlockDst + 320 * 10 + 3) = Weight3_1(_30, _33);
+			*(BlockDst + 320 * 20 + 2) = Weight3_1(Weight3_1(_29, _30), Weight3_1(_32, _33));
+			*(BlockDst + 320 * 20 + 3) = Weight3_1(_30, _33);
 
 			// -- Row 12 --
 			uint16_t _34 = palettetranslate[*(BlockSrc + 256 * 11     + 8)];
-			*(BlockDst + 320 * 11 + 0) = Weight3_1(_31, _34);
+			*(BlockDst + 320 * 22 + 0) = Weight3_1(_31, _34);
 			uint16_t _35 = palettetranslate[*(BlockSrc + 256 * 11 + 1 + 8)];
-			*(BlockDst + 320 * 11 + 1) = Weight3_1(Weight1_3(_31, _32), Weight1_3(_34, _35));
+			*(BlockDst + 320 * 22 + 1) = Weight3_1(Weight1_3(_31, _32), Weight1_3(_34, _35));
 			uint16_t _36 = palettetranslate[*(BlockSrc + 256 * 11 + 2 + 8)];
-			*(BlockDst + 320 * 11 + 2) = Weight3_1(Weight3_1(_32, _33), Weight3_1(_35, _36));
-			*(BlockDst + 320 * 11 + 3) = Weight3_1(_33, _36);
+			*(BlockDst + 320 * 22 + 2) = Weight3_1(Weight3_1(_32, _33), Weight3_1(_35, _36));
+			*(BlockDst + 320 * 22 + 3) = Weight3_1(_33, _36);
 
 			// -- Row 13 --
 			uint16_t _37 = palettetranslate[*(BlockSrc + 256 * 12     + 8)];
-			*(BlockDst + 320 * 12 + 0) = Weight3_1(_34, _37);
+			*(BlockDst + 320 * 24 + 0) = Weight3_1(_34, _37);
 			uint16_t _38 = palettetranslate[*(BlockSrc + 256 * 12 + 1 + 8)];
-			*(BlockDst + 320 * 12 + 1) = Weight3_1(Weight1_3(_34, _35), Weight1_3(_37, _38));
+			*(BlockDst + 320 * 24 + 1) = Weight3_1(Weight1_3(_34, _35), Weight1_3(_37, _38));
 			uint16_t _39 = palettetranslate[*(BlockSrc + 256 * 12 + 2 + 8)];
-			*(BlockDst + 320 * 12 + 2) = Weight3_1(Weight3_1(_35, _36), Weight3_1(_38, _39));
-			*(BlockDst + 320 * 12 + 3) = Weight3_1(_36, _39);
+			*(BlockDst + 320 * 24 + 2) = Weight3_1(Weight3_1(_35, _36), Weight3_1(_38, _39));
+			*(BlockDst + 320 * 24 + 3) = Weight3_1(_36, _39);
 
 			// -- Row 14 --
 			uint16_t _40 = palettetranslate[*(BlockSrc + 256 * 13     + 8)];
-			*(BlockDst + 320 * 13 + 0) = Weight3_1(_37, _40);
+			*(BlockDst + 320 * 26 + 0) = Weight3_1(_37, _40);
 			uint16_t _41 = palettetranslate[*(BlockSrc + 256 * 13 + 1 + 8)];
-			*(BlockDst + 320 * 13 + 1) = Weight3_1(Weight1_3(_37, _38), Weight1_3(_40, _41));
+			*(BlockDst + 320 * 26 + 1) = Weight3_1(Weight1_3(_37, _38), Weight1_3(_40, _41));
 			uint16_t _42 = palettetranslate[*(BlockSrc + 256 * 13 + 2 + 8)];
-			*(BlockDst + 320 * 13 + 2) = Weight3_1(Weight3_1(_38, _39), Weight3_1(_41, _42));
-			*(BlockDst + 320 * 13 + 3) = Weight3_1(_39, _42);
+			*(BlockDst + 320 * 26 + 2) = Weight3_1(Weight3_1(_38, _39), Weight3_1(_41, _42));
+			*(BlockDst + 320 * 26 + 3) = Weight3_1(_39, _42);
 
 			// -- Row 15 --
-			*(BlockDst + 320 * 14 + 0) = _40;
-			*(BlockDst + 320 * 14 + 1) = Weight1_3(_40, _41);
-			*(BlockDst + 320 * 14 + 2) = Weight3_1(_41, _42);
-			*(BlockDst + 320 * 14 + 3) = _42;
+			*(BlockDst + 320 * 28 + 0) = _40;
+			*(BlockDst + 320 * 28 + 1) = Weight1_3(_40, _41);
+			*(BlockDst + 320 * 28 + 2) = Weight3_1(_41, _42);
+			*(BlockDst + 320 * 28 + 3) = _42;
 
 			// -- Row 16 --
 			uint16_t _43 = palettetranslate[*(BlockSrc + 256 * 14     + 8)];
-			*(BlockDst + 320 * 15 + 0) = _43;
+			*(BlockDst + 320 * 30 + 0) = _43;
 			uint16_t _44 = palettetranslate[*(BlockSrc + 256 * 14 + 1 + 8)];
-			*(BlockDst + 320 * 15 + 1) = Weight1_3(_43, _44);
+			*(BlockDst + 320 * 30 + 1) = Weight1_3(_43, _44);
 			uint16_t _45 = palettetranslate[*(BlockSrc + 256 * 14 + 2 + 8)];
-			*(BlockDst + 320 * 15 + 2) = Weight3_1(_44, _45);
-			*(BlockDst + 320 * 15 + 3) = _45;
+			*(BlockDst + 320 * 30 + 2) = Weight3_1(_44, _45);
+			*(BlockDst + 320 * 30 + 3) = _45;
 
 			// -- Row 17 --
 			uint16_t _46 = palettetranslate[*(BlockSrc + 256 * 15     + 8)];
-			*(BlockDst + 320 * 16 + 0) = _46;
+			*(BlockDst + 320 * 32 + 0) = _46;
 			uint16_t _47 = palettetranslate[*(BlockSrc + 256 * 15 + 1 + 8)];
-			*(BlockDst + 320 * 16 + 1) = Weight1_3(_46, _47);
+			*(BlockDst + 320 * 32 + 1) = Weight1_3(_46, _47);
 			uint16_t _48 = palettetranslate[*(BlockSrc + 256 * 15 + 2 + 8)];
-			*(BlockDst + 320 * 16 + 2) = Weight3_1(_47, _48);
-			*(BlockDst + 320 * 16 + 3) = _48;
+			*(BlockDst + 320 * 32 + 2) = Weight3_1(_47, _48);
+			*(BlockDst + 320 * 32 + 3) = _48;
 
 			BlockSrc += 3;
 			BlockDst += 4;
@@ -557,7 +557,7 @@ void upscale_320x240_bilinearish_noclip(uint32_t* dst, uint8 *src, int width)
 	for (BlockY = 0; BlockY < 14; BlockY++)
 	{
 		BlockSrc = Src16 + BlockY * 256 * 16;
-		BlockDst = Dst16 + BlockY * 320 * 17;
+		BlockDst = Dst16 + BlockY * 320 * 34;
 		for (BlockX = 0; BlockX < 64; BlockX++)
 		{
 			/* Horizontally:
@@ -600,175 +600,175 @@ void upscale_320x240_bilinearish_noclip(uint32_t* dst, uint8 *src, int width)
 
 			// -- Row 2 --
 			uint16_t  _5 = palettetranslate[*(BlockSrc + 256 *  1    )];
-			*(BlockDst + 320 *  1 + 0) = _5;
+			*(BlockDst + 320 *  2 + 0) = _5;
 			uint16_t  _6 = palettetranslate[*(BlockSrc + 256 *  1 + 1)];
-			*(BlockDst + 320 *  1 + 1) = Weight1_3( _5,  _6);
+			*(BlockDst + 320 *  2 + 1) = Weight1_3( _5,  _6);
 			uint16_t  _7 = palettetranslate[*(BlockSrc + 256 *  1 + 2)];
-			*(BlockDst + 320 *  1 + 2) = Weight1_1( _6,  _7);
+			*(BlockDst + 320 *  2 + 2) = Weight1_1( _6,  _7);
 			uint16_t  _8 = palettetranslate[*(BlockSrc + 256 *  1 + 3)];
-			*(BlockDst + 320 *  1 + 3) = Weight3_1( _7,  _8);
-			*(BlockDst + 320 *  1 + 4) = _8;
+			*(BlockDst + 320 *  2 + 3) = Weight3_1( _7,  _8);
+			*(BlockDst + 320 *  2 + 4) = _8;
 
 			// -- Row 3 --
 			uint16_t  _9 = palettetranslate[*(BlockSrc + 256 *  2    )];
-			*(BlockDst + 320 *  2 + 0) = _9;
+			*(BlockDst + 320 *  4 + 0) = _9;
 			uint16_t  _10 = palettetranslate[*(BlockSrc + 256 *  2 + 1)];
-			*(BlockDst + 320 *  2 + 1) = Weight1_3( _9, _10);
+			*(BlockDst + 320 *  4 + 1) = Weight1_3( _9, _10);
 			uint16_t  _11 = palettetranslate[*(BlockSrc + 256 *  2 + 2)];
-			*(BlockDst + 320 *  2 + 2) = Weight1_1(_10, _11);
+			*(BlockDst + 320 *  4 + 2) = Weight1_1(_10, _11);
 			uint16_t  _12 = palettetranslate[*(BlockSrc + 256 *  2 + 3)];
-			*(BlockDst + 320 *  2 + 3) = Weight3_1(_11, _12);
-			*(BlockDst + 320 *  2 + 4) = _12;
+			*(BlockDst + 320 *  4 + 3) = Weight3_1(_11, _12);
+			*(BlockDst + 320 *  4 + 4) = _12;
 
 			// -- Row 4 --
 			uint16_t _13 = palettetranslate[*(BlockSrc + 256 *  3    )];
-			*(BlockDst + 320 *  3 + 0) = Weight1_3( _9, _13);
+			*(BlockDst + 320 *  6 + 0) = Weight1_3( _9, _13);
 			uint16_t _14 = palettetranslate[*(BlockSrc + 256 *  3 + 1)];
-			*(BlockDst + 320 *  3 + 1) = Weight1_3(Weight1_3( _9, _10), Weight1_3(_13, _14));
+			*(BlockDst + 320 *  6 + 1) = Weight1_3(Weight1_3( _9, _10), Weight1_3(_13, _14));
 			uint16_t _15 = palettetranslate[*(BlockSrc + 256 *  3 + 2)];
-			*(BlockDst + 320 *  3 + 2) = Weight1_3(Weight1_1(_10, _11), Weight1_1(_14, _15));
+			*(BlockDst + 320 *  6 + 2) = Weight1_3(Weight1_1(_10, _11), Weight1_1(_14, _15));
 			uint16_t _16 = palettetranslate[*(BlockSrc + 256 *  3 + 3)];
-			*(BlockDst + 320 *  3 + 3) = Weight1_3(Weight3_1(_11, _12), Weight3_1(_15, _16));
-			*(BlockDst + 320 *  3 + 4) = Weight1_3(_12, _16);
+			*(BlockDst + 320 *  6 + 3) = Weight1_3(Weight3_1(_11, _12), Weight3_1(_15, _16));
+			*(BlockDst + 320 *  6 + 4) = Weight1_3(_12, _16);
 
 			// -- Row 5 --
 			uint16_t _17 = palettetranslate[*(BlockSrc + 256 *  4    )];
-			*(BlockDst + 320 *  4 + 0) = Weight1_3(_13, _17);
+			*(BlockDst + 320 *  8 + 0) = Weight1_3(_13, _17);
 			uint16_t _18 = palettetranslate[*(BlockSrc + 256 *  4 + 1)];
-			*(BlockDst + 320 *  4 + 1) = Weight1_3(Weight1_3(_13, _14), Weight1_3(_17, _18));
+			*(BlockDst + 320 *  8 + 1) = Weight1_3(Weight1_3(_13, _14), Weight1_3(_17, _18));
 			uint16_t _19 = palettetranslate[*(BlockSrc + 256 *  4 + 2)];
-			*(BlockDst + 320 *  4 + 2) = Weight1_3(Weight1_1(_14, _15), Weight1_1(_18, _19));
+			*(BlockDst + 320 *  8 + 2) = Weight1_3(Weight1_1(_14, _15), Weight1_1(_18, _19));
 			uint16_t _20 = palettetranslate[*(BlockSrc + 256 *  4 + 3)];
-			*(BlockDst + 320 *  4 + 3) = Weight1_3(Weight3_1(_15, _16), Weight3_1(_19, _20));
-			*(BlockDst + 320 *  4 + 4) = Weight1_3(_16, _20);
+			*(BlockDst + 320 *  8 + 3) = Weight1_3(Weight3_1(_15, _16), Weight3_1(_19, _20));
+			*(BlockDst + 320 *  8 + 4) = Weight1_3(_16, _20);
 
 			// -- Row 6 --
 			uint16_t _21 = palettetranslate[*(BlockSrc + 256 *  5    )];
-			*(BlockDst + 320 *  5 + 0) = Weight1_3(_17, _21);
+			*(BlockDst + 320 *  10 + 0) = Weight1_3(_17, _21);
 			uint16_t _22 = palettetranslate[*(BlockSrc + 256 *  5 + 1)];
-			*(BlockDst + 320 *  5 + 1) = Weight1_3(Weight1_3(_17, _18), Weight1_3(_21, _22));
+			*(BlockDst + 320 *  10 + 1) = Weight1_3(Weight1_3(_17, _18), Weight1_3(_21, _22));
 			uint16_t _23 = palettetranslate[*(BlockSrc + 256 *  5 + 2)];
-			*(BlockDst + 320 *  5 + 2) = Weight1_3(Weight1_1(_18, _19), Weight1_1(_22, _23));
+			*(BlockDst + 320 *  10 + 2) = Weight1_3(Weight1_1(_18, _19), Weight1_1(_22, _23));
 			uint16_t _24 = palettetranslate[*(BlockSrc + 256 *  5 + 3)];
-			*(BlockDst + 320 *  5 + 3) = Weight1_3(Weight3_1(_19, _20), Weight3_1(_23, _24));
-			*(BlockDst + 320 *  5 + 4) = Weight1_3(_20, _24);
+			*(BlockDst + 320 *  10 + 3) = Weight1_3(Weight3_1(_19, _20), Weight3_1(_23, _24));
+			*(BlockDst + 320 *  10 + 4) = Weight1_3(_20, _24);
 
 			// -- Row 7 --
 			uint16_t _25 = palettetranslate[*(BlockSrc + 256 *  6    )];
-			*(BlockDst + 320 *  6 + 0) = Weight1_3(_21, _25);
+			*(BlockDst + 320 *  12 + 0) = Weight1_3(_21, _25);
 			uint16_t _26 = palettetranslate[*(BlockSrc + 256 *  6 + 1)];
-			*(BlockDst + 320 *  6 + 1) = Weight1_3(Weight1_3(_21, _22), Weight1_3(_25, _26));
+			*(BlockDst + 320 *  12 + 1) = Weight1_3(Weight1_3(_21, _22), Weight1_3(_25, _26));
 			uint16_t _27 = palettetranslate[*(BlockSrc + 256 *  6 + 2)];
-			*(BlockDst + 320 *  6 + 2) = Weight1_3(Weight1_1(_22, _23), Weight1_1(_26, _27));
+			*(BlockDst + 320 *  12 + 2) = Weight1_3(Weight1_1(_22, _23), Weight1_1(_26, _27));
 			uint16_t _28 = palettetranslate[*(BlockSrc + 256 *  6 + 3)];
-			*(BlockDst + 320 *  6 + 3) = Weight1_3(Weight3_1(_23, _24), Weight3_1(_27, _28));
-			*(BlockDst + 320 *  6 + 4) = Weight1_3(_24, _28);
+			*(BlockDst + 320 *  12 + 3) = Weight1_3(Weight3_1(_23, _24), Weight3_1(_27, _28));
+			*(BlockDst + 320 *  12 + 4) = Weight1_3(_24, _28);
 
 			// -- Row 8 --
 			uint16_t _29 = palettetranslate[*(BlockSrc + 256 *  7    )];
-			*(BlockDst + 320 *  7 + 0) = Weight1_3(_25, _29);
+			*(BlockDst + 320 *  14 + 0) = Weight1_3(_25, _29);
 			uint16_t _30 = palettetranslate[*(BlockSrc + 256 *  7 + 1)];
-			*(BlockDst + 320 *  7 + 1) = Weight1_3(Weight1_3(_25, _26), Weight1_3(_29, _30));
+			*(BlockDst + 320 *  14 + 1) = Weight1_3(Weight1_3(_25, _26), Weight1_3(_29, _30));
 			uint16_t _31 = palettetranslate[*(BlockSrc + 256 *  7 + 2)];
-			*(BlockDst + 320 *  7 + 2) = Weight1_3(Weight1_1(_26, _27), Weight1_1(_30, _31));
+			*(BlockDst + 320 *  14 + 2) = Weight1_3(Weight1_1(_26, _27), Weight1_1(_30, _31));
 			uint16_t _32 = palettetranslate[*(BlockSrc + 256 *  7 + 3)];
-			*(BlockDst + 320 *  7 + 3) = Weight1_3(Weight3_1(_27, _28), Weight3_1(_31, _32));
-			*(BlockDst + 320 *  7 + 4) = Weight1_3(_28, _32);
+			*(BlockDst + 320 *  14 + 3) = Weight1_3(Weight3_1(_27, _28), Weight3_1(_31, _32));
+			*(BlockDst + 320 *  14 + 4) = Weight1_3(_28, _32);
 
 			// -- Row 9 --
 			uint16_t _33 = palettetranslate[*(BlockSrc + 256 *  8    )];
-			*(BlockDst + 320 *  8 + 0) = Weight1_1(_29, _33);
+			*(BlockDst + 320 *  16 + 0) = Weight1_1(_29, _33);
 			uint16_t _34 = palettetranslate[*(BlockSrc + 256 *  8 + 1)];
-			*(BlockDst + 320 *  8 + 1) = Weight1_1(Weight1_3(_29, _30), Weight1_3(_33, _34));
+			*(BlockDst + 320 *  16 + 1) = Weight1_1(Weight1_3(_29, _30), Weight1_3(_33, _34));
 			uint16_t _35 = palettetranslate[*(BlockSrc + 256 *  8 + 2)];
-			*(BlockDst + 320 *  8 + 2) = Weight1_1(Weight1_1(_30, _31), Weight1_1(_34, _35));
+			*(BlockDst + 320 *  16 + 2) = Weight1_1(Weight1_1(_30, _31), Weight1_1(_34, _35));
 			uint16_t _36 = palettetranslate[*(BlockSrc + 256 *  8 + 3)];
-			*(BlockDst + 320 *  8 + 3) = Weight1_1(Weight3_1(_31, _32), Weight3_1(_35, _36));
-			*(BlockDst + 320 *  8 + 4) = Weight1_1(_32, _36);
+			*(BlockDst + 320 *  16 + 3) = Weight1_1(Weight3_1(_31, _32), Weight3_1(_35, _36));
+			*(BlockDst + 320 *  16 + 4) = Weight1_1(_32, _36);
 
 			// -- Row 10 --
 			uint16_t _37 = palettetranslate[*(BlockSrc + 256 *  9    )];
-			*(BlockDst + 320 *  9 + 0) = Weight3_1(_33, _37);
+			*(BlockDst + 320 *  18 + 0) = Weight3_1(_33, _37);
 			uint16_t _38 = palettetranslate[*(BlockSrc + 256 *  9 + 1)];
-			*(BlockDst + 320 *  9 + 1) = Weight3_1(Weight1_3(_33, _34), Weight1_3(_37, _38));
+			*(BlockDst + 320 *  18 + 1) = Weight3_1(Weight1_3(_33, _34), Weight1_3(_37, _38));
 			uint16_t _39 = palettetranslate[*(BlockSrc + 256 *  9 + 2)];
-			*(BlockDst + 320 *  9 + 2) = Weight3_1(Weight1_1(_34, _35), Weight1_1(_38, _39));
+			*(BlockDst + 320 *  18 + 2) = Weight3_1(Weight1_1(_34, _35), Weight1_1(_38, _39));
 			uint16_t _40 = palettetranslate[*(BlockSrc + 256 *  9 + 3)];
-			*(BlockDst + 320 *  9 + 3) = Weight3_1(Weight3_1(_35, _36), Weight3_1(_39, _40));
-			*(BlockDst + 320 *  9 + 4) = Weight3_1(_36, _40);
+			*(BlockDst + 320 *  18 + 3) = Weight3_1(Weight3_1(_35, _36), Weight3_1(_39, _40));
+			*(BlockDst + 320 *  18 + 4) = Weight3_1(_36, _40);
 
 			// -- Row 11 --
 			uint16_t _41 = palettetranslate[*(BlockSrc + 256 * 10    )];
-			*(BlockDst + 320 * 10 + 0) = Weight3_1(_37, _41);
+			*(BlockDst + 320 * 20 + 0) = Weight3_1(_37, _41);
 			uint16_t _42 = palettetranslate[*(BlockSrc + 256 * 10 + 1)];
-			*(BlockDst + 320 * 10 + 1) = Weight3_1(Weight1_3(_37, _38), Weight1_3(_41, _42));
+			*(BlockDst + 320 * 20 + 1) = Weight3_1(Weight1_3(_37, _38), Weight1_3(_41, _42));
 			uint16_t _43 = palettetranslate[*(BlockSrc + 256 * 10 + 2)];
-			*(BlockDst + 320 * 10 + 2) = Weight3_1(Weight1_1(_38, _39), Weight1_1(_42, _43));
+			*(BlockDst + 320 * 20 + 2) = Weight3_1(Weight1_1(_38, _39), Weight1_1(_42, _43));
 			uint16_t _44 = palettetranslate[*(BlockSrc + 256 * 10 + 3)];
-			*(BlockDst + 320 * 10 + 3) = Weight3_1(Weight3_1(_39, _40), Weight3_1(_43, _44));
-			*(BlockDst + 320 * 10 + 4) = Weight3_1(_40, _44);
+			*(BlockDst + 320 * 20 + 3) = Weight3_1(Weight3_1(_39, _40), Weight3_1(_43, _44));
+			*(BlockDst + 320 * 20 + 4) = Weight3_1(_40, _44);
 
 			// -- Row 12 --
 			uint16_t _45 = palettetranslate[*(BlockSrc + 256 * 11    )];
-			*(BlockDst + 320 * 11 + 0) = Weight3_1(_41, _45);
+			*(BlockDst + 320 * 22 + 0) = Weight3_1(_41, _45);
 			uint16_t _46 = palettetranslate[*(BlockSrc + 256 * 11 + 1)];
-			*(BlockDst + 320 * 11 + 1) = Weight3_1(Weight1_3(_41, _42), Weight1_3(_45, _46));
+			*(BlockDst + 320 * 22 + 1) = Weight3_1(Weight1_3(_41, _42), Weight1_3(_45, _46));
 			uint16_t _47 = palettetranslate[*(BlockSrc + 256 * 11 + 2)];
-			*(BlockDst + 320 * 11 + 2) = Weight3_1(Weight1_1(_42, _43), Weight1_1(_46, _47));
+			*(BlockDst + 320 * 22 + 2) = Weight3_1(Weight1_1(_42, _43), Weight1_1(_46, _47));
 			uint16_t _48 = palettetranslate[*(BlockSrc + 256 * 11 + 3)];
-			*(BlockDst + 320 * 11 + 3) = Weight3_1(Weight3_1(_43, _44), Weight3_1(_47, _48));
-			*(BlockDst + 320 * 11 + 4) = Weight3_1(_44, _48);
+			*(BlockDst + 320 * 22 + 3) = Weight3_1(Weight3_1(_43, _44), Weight3_1(_47, _48));
+			*(BlockDst + 320 * 22 + 4) = Weight3_1(_44, _48);
 
 			// -- Row 13 --
 			uint16_t _49 = palettetranslate[*(BlockSrc + 256 * 12    )];
-			*(BlockDst + 320 * 12 + 0) = Weight3_1(_45, _49);
+			*(BlockDst + 320 * 24 + 0) = Weight3_1(_45, _49);
 			uint16_t _50 = palettetranslate[*(BlockSrc + 256 * 12 + 1)];
-			*(BlockDst + 320 * 12 + 1) = Weight3_1(Weight1_3(_45, _46), Weight1_3(_49, _50));
+			*(BlockDst + 320 * 24 + 1) = Weight3_1(Weight1_3(_45, _46), Weight1_3(_49, _50));
 			uint16_t _51 = palettetranslate[*(BlockSrc + 256 * 12 + 2)];
-			*(BlockDst + 320 * 12 + 2) = Weight3_1(Weight1_1(_46, _47), Weight1_1(_50, _51));
+			*(BlockDst + 320 * 24 + 2) = Weight3_1(Weight1_1(_46, _47), Weight1_1(_50, _51));
 			uint16_t _52 = palettetranslate[*(BlockSrc + 256 * 12 + 3)];
-			*(BlockDst + 320 * 12 + 3) = Weight3_1(Weight3_1(_47, _48), Weight3_1(_51, _52));
-			*(BlockDst + 320 * 12 + 4) = Weight3_1(_48, _52);
+			*(BlockDst + 320 * 24 + 3) = Weight3_1(Weight3_1(_47, _48), Weight3_1(_51, _52));
+			*(BlockDst + 320 * 24 + 4) = Weight3_1(_48, _52);
 
 			// -- Row 14 --
 			uint16_t _53 = palettetranslate[*(BlockSrc + 256 * 13    )];
-			*(BlockDst + 320 * 13 + 0) = Weight3_1(_49, _53);
+			*(BlockDst + 320 * 26 + 0) = Weight3_1(_49, _53);
 			uint16_t _54 = palettetranslate[*(BlockSrc + 256 * 13 + 1)];
-			*(BlockDst + 320 * 13 + 1) = Weight3_1(Weight1_3(_49, _50), Weight1_3(_53, _54));
+			*(BlockDst + 320 * 26 + 1) = Weight3_1(Weight1_3(_49, _50), Weight1_3(_53, _54));
 			uint16_t _55 = palettetranslate[*(BlockSrc + 256 * 13 + 2)];
-			*(BlockDst + 320 * 13 + 2) = Weight3_1(Weight1_1(_50, _51), Weight1_1(_54, _55));
+			*(BlockDst + 320 * 26 + 2) = Weight3_1(Weight1_1(_50, _51), Weight1_1(_54, _55));
 			uint16_t _56 = palettetranslate[*(BlockSrc + 256 * 13 + 3)];
-			*(BlockDst + 320 * 13 + 3) = Weight3_1(Weight3_1(_51, _52), Weight3_1(_55, _56));
-			*(BlockDst + 320 * 13 + 4) = Weight3_1(_52, _56);
+			*(BlockDst + 320 * 26 + 3) = Weight3_1(Weight3_1(_51, _52), Weight3_1(_55, _56));
+			*(BlockDst + 320 * 26 + 4) = Weight3_1(_52, _56);
 
 			// -- Row 15 --
-			*(BlockDst + 320 * 14 + 0) = _53;
-			*(BlockDst + 320 * 14 + 1) = Weight1_3(_53, _54);
-			*(BlockDst + 320 * 14 + 2) = Weight1_1(_54, _55);
-			*(BlockDst + 320 * 14 + 3) = Weight3_1(_55, _56);
-			*(BlockDst + 320 * 14 + 4) = _56;
+			*(BlockDst + 320 * 28 + 0) = _53;
+			*(BlockDst + 320 * 28 + 1) = Weight1_3(_53, _54);
+			*(BlockDst + 320 * 28 + 2) = Weight1_1(_54, _55);
+			*(BlockDst + 320 * 28 + 3) = Weight3_1(_55, _56);
+			*(BlockDst + 320 * 28 + 4) = _56;
 
 			// -- Row 16 --
 			uint16_t _57 = palettetranslate[*(BlockSrc + 256 * 14    )];
-			*(BlockDst + 320 * 15 + 0) = _57;
+			*(BlockDst + 320 * 30 + 0) = _57;
 			uint16_t _58 = palettetranslate[*(BlockSrc + 256 * 14 + 1)];
-			*(BlockDst + 320 * 15 + 1) = Weight1_3(_57, _58);
+			*(BlockDst + 320 * 30 + 1) = Weight1_3(_57, _58);
 			uint16_t _59 = palettetranslate[*(BlockSrc + 256 * 14 + 2)];
-			*(BlockDst + 320 * 15 + 2) = Weight1_1(_58, _59);
+			*(BlockDst + 320 * 30 + 2) = Weight1_1(_58, _59);
 			uint16_t _60 = palettetranslate[*(BlockSrc + 256 * 14 + 3)];
-			*(BlockDst + 320 * 15 + 3) = Weight3_1(_59, _60);
-			*(BlockDst + 320 * 15 + 4) = _60;
+			*(BlockDst + 320 * 30 + 3) = Weight3_1(_59, _60);
+			*(BlockDst + 320 * 30 + 4) = _60;
 
 			// -- Row 17 --
 			uint16_t _61 = palettetranslate[*(BlockSrc + 256 * 15    )];
-			*(BlockDst + 320 * 16 + 0) = _61;
+			*(BlockDst + 320 * 32 + 0) = _61;
 			uint16_t _62 = palettetranslate[*(BlockSrc + 256 * 15 + 1)];
-			*(BlockDst + 320 * 16 + 1) = Weight1_3(_61, _62);
+			*(BlockDst + 320 * 32 + 1) = Weight1_3(_61, _62);
 			uint16_t _63 = palettetranslate[*(BlockSrc + 256 * 15 + 2)];
-			*(BlockDst + 320 * 16 + 2) = Weight1_1(_62, _63);
+			*(BlockDst + 320 * 32 + 2) = Weight1_1(_62, _63);
 			uint16_t _64 = palettetranslate[*(BlockSrc + 256 * 15 + 3)];
-			*(BlockDst + 320 * 16 + 3) = Weight3_1(_63, _64);
-			*(BlockDst + 320 * 16 + 4) = _64;
+			*(BlockDst + 320 * 32 + 3) = Weight3_1(_63, _64);
+			*(BlockDst + 320 * 32 + 4) = _64;
 
 			BlockSrc += 4;
 			BlockDst += 5;
@@ -940,7 +940,7 @@ void upscale_256_to_320(uint16_t* dst, int dst_width, uint8* src, int src_height
 }
 
 #include "types.h"
-static u16 buffer2x[256*2 * 240];
+static u16 buffer2x[256*2 * RS97_SCREEN_HEIGHT];
 extern void half_2xSaI(u8* srcPtr, u32 srcPitch, u8* deltaPtr, u8* dstPtr, u32 dstPitch, int width, int height);
 extern void _2xSaI(u8* srcPtr, u32 srcPitch, u8* deltaPtr, u8* dstPtr, u32 dstPitch, int width, int height);
 extern void SuperEagle(u8* srcPtr, u32 srcPitch, u8* deltaPtr, u8* dstPtr, u32 dstPitch, int width, int height);
@@ -988,7 +988,7 @@ extern void palette_2xSaI(u8* srcPtr, u32 srcPitch, u8* deltaPtr, u8* dstPtr, u3
 
 void upscale_256_to_320_filter(uint16_t* dst, int dst_width, uint8* src, int src_height)
 {
-	if (src_height > 240) return;
+	if (src_height > RS97_SCREEN_HEIGHT) return;
 	//
 	{
         register u16* src16 = (u16*)src;
@@ -1101,7 +1101,7 @@ void upscale_256_to_320_filter(uint16_t* dst, int dst_width, uint8* src, int src
 
 void upscale_256_to_288_filter(uint16_t* dst, int dst_width, uint8* src, int src_height)
 {
-	if (src_height > 240) return;
+	if (src_height > RS97_SCREEN_HEIGHT) return;
 	//
 	{
         register u16* src16 = (u16*)src;

@@ -450,18 +450,21 @@ void BlitScreen(uint8 *XBuf) {
 		//TonyJih@CTC for RS97 screen
 		//dest += (screen->w/2 * s_firstline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w;
 		dest += (screen->w/2 * s_firstline) + pinc / 2 + ((screen->h - 466) / 4) * screen->w;
-
 		for (y = s_tlines; y; y--, src += 256 - NWIDTH) {
 			for (x = NWIDTH >> 3; x; x--) {
 				__builtin_prefetch(dest + 4, 1);
+				*(dest) = palettetranslate[*(uint16 *) src];
 				*(dest + 160) = palettetranslate[*(uint16 *) src];
-				*dest++ = palettetranslate[*(uint16 *) src];
+				dest++;
+				*(dest) = palettetranslate[*(uint16 *) (src + 2)];
 				*(dest + 160) = palettetranslate[*(uint16 *) (src + 2)];
-				*dest++ = palettetranslate[*(uint16 *) (src + 2)];
+				dest++;
+				*(dest) = palettetranslate[*(uint16 *) (src + 4)];
 				*(dest + 160) = palettetranslate[*(uint16 *) (src + 4)];
-				*dest++ = palettetranslate[*(uint16 *) (src + 4)];
+				dest++;
+				*(dest) = palettetranslate[*(uint16 *) (src + 6)];
 				*(dest + 160) = palettetranslate[*(uint16 *) (src + 6)];
-				*dest++ = palettetranslate[*(uint16 *) (src + 6)];
+				dest++;
 				src += 8;
 			}
 			dest += pinc;
