@@ -220,7 +220,12 @@ W_OPTS	= -Wno-write-strings -Wno-sign-compare
 
 F_OPTS = -fomit-frame-pointer -fno-builtin -fno-common
 
-CC_OPTS	= -O2 -mips32 $(F_OPTS) $(W_OPTS)
+OPTIMIZE =  -O2 -mips32 -march=mips32 -mno-mips16 -fomit-frame-pointer -fno-builtin   \
+            -fno-common -Wno-write-strings -Wno-sign-compare -ffast-math -ftree-vectorize \
+			-funswitch-loops -fno-strict-aliasing
+
+
+CC_OPTS	= -O2 -mips32 $(F_OPTS) $(W_OPTS) $(OPTIMIZE)
 
 CFLAGS += $(CC_OPTS)
 CFLAGS += -DDINGUX \
@@ -241,7 +246,6 @@ TARGET = fceux
 
 all: $(TARGET)
 	mipsel-linux-strip bin/$(TARGET)
-	sh make_opk.sh
 
 $(TARGET): $(OBJS)
 	@mkdir -p bin/
