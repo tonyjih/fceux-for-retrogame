@@ -38,7 +38,7 @@
 #include "dface.h"
 
 #include "../common/configSys.h"
-
+#include "dma.h"
 // GLOBALS
 SDL_Surface *screen;
 SDL_Surface *nes_screen; // 256x224
@@ -168,7 +168,7 @@ int InitVideo(FCEUGI *gi) {
 			{400, 240},
 			{480, 272}
 		};
-
+		dma_map_buffer();
 		//TonyJih@CTC for RS97 screen
 		//for(vm = NUMOFVIDEOMODES-1; vm >= 0; vm--)
 		//{
@@ -335,10 +335,10 @@ void BlitScreen(uint8 *XBuf) {
     { // fullscreen 2xSaI 320x224, 320x240
 		switch(screen->w)
 		{
-			case 480: upscale_480x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-			case 400: upscale_384x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 480: upscale_480x272((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
+			case 400: upscale_384x240((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
 			case 320:
-			    uint16* dest = (uint16*)screen->pixels;
+			    uint16* dest = (uint16*)dma_ptr;
 			    dest += (screen->w * s_firstline) + (screen->w - 320) / 2 + ((screen->h - 240) / 2) * screen->w;
 			    src += (s_firstline * 256) + 0;
 			    upscale_256_to_320_filter(dest, screen->w, src, s_tlines);
@@ -349,10 +349,10 @@ void BlitScreen(uint8 *XBuf) {
     { // fullscreen new 320x224, 320x240
 		switch(screen->w)
 		{
-			case 480: upscale_480x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-			case 400: upscale_384x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 480: upscale_480x272((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
+			case 400: upscale_384x240((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
 			case 320:
-			    uint16* dest = (uint16*)screen->pixels;
+			    uint16* dest = (uint16*)dma_ptr;
 			    dest += (screen->w * s_firstline) + (screen->w - 320) / 2 + ((screen->h - 240) / 2) * screen->w;
 			    src += (s_firstline * 256) + 0;
 			    upscale_256_to_320(dest, screen->w, src, s_tlines);
@@ -363,10 +363,10 @@ void BlitScreen(uint8 *XBuf) {
     { // aspect fullscreen 2xSaI 288x224, 288x240
 		switch(screen->w)
 		{
-			case 480: upscale_384x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 480: upscale_384x272((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
 			case 400:
 			case 320:
-			    uint16* dest = (uint16*)screen->pixels;
+			    uint16* dest = (uint16*)dma_ptr;
 			    dest += (screen->w * s_firstline) + (screen->w - 288) / 2 + ((screen->h - 240) / 2) * screen->w;
 			    src += (s_firstline * 256) + 0;
 			    upscale_256_to_288_filter(dest, screen->w, src, s_tlines);
@@ -377,10 +377,10 @@ void BlitScreen(uint8 *XBuf) {
     { // aspect fullscreen new 288x224, 288x240
 		switch(screen->w)
 		{
-			case 480: upscale_384x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 480: upscale_384x272((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
 			case 400:
 			case 320:
-			    uint16* dest = (uint16*)screen->pixels;
+			    uint16* dest = (uint16*)dma_ptr;
 			    dest += (screen->w * s_firstline) + (screen->w - 288) / 2 + ((screen->h - 240) / 2) * screen->w;
 			    src += (s_firstline * 256) + 0;
 			    upscale_256_to_288(dest, screen->w, src, s_tlines);
@@ -388,23 +388,23 @@ void BlitScreen(uint8 *XBuf) {
 		}
 	} else if (s_fullscreen == 3) { // fullscreen smooth
 		if (s_clipSides) {
-			upscale_320x240_bilinearish_clip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
+			upscale_320x240_bilinearish_clip((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8, 256);
 		} else {
-			upscale_320x240_bilinearish_noclip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
+			upscale_320x240_bilinearish_noclip((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8, 256);
 		}
 	} else if (s_fullscreen == 2) { // fullscreen
 		switch(screen->w) {
-			case 480: upscale_480x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-			case 400: upscale_384x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-			case 320: upscale_320x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 480: upscale_480x272((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
+			case 400: upscale_384x240((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
+			case 320: upscale_320x240((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
 		}
 	} else if (s_fullscreen == 1) { // aspect fullscreen
 		switch(screen->w) {
-			case 480: upscale_384x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 480: upscale_384x272((uint32 *)dma_ptr, (uint8 *)XBuf + 256 * 8); break;
 			case 400:
 			case 320:
 				src += (s_firstline * 256) + 8;
-				register uint16 *dest = (uint16 *) screen->pixels;
+				register uint16 *dest = (uint16 *) dma_ptr;
 				//dest += (320 * s_firstline) + 20;
 				dest += (screen->w * s_firstline) + (screen->w - 280) / 2 + ((screen->h - 466) / 2) * screen->w;
 
@@ -441,7 +441,7 @@ void BlitScreen(uint8 *XBuf) {
 		// doesn't work in rzx-50 dingux
 		//SDL_BlitSurface(nes_screen, 0, screen, &dstrect);
 
-		register uint32 *dest = (uint32 *) screen->pixels;
+		register uint32 *dest = (uint32 *) dma_ptr;
 
 		// XXX soules - not entirely sure why this is being done yet
 		src += (s_firstline * 256) + NOFFSET;
@@ -468,8 +468,8 @@ void BlitScreen(uint8 *XBuf) {
 		}
 	}
 
-	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
-	SDL_Flip(screen);
+	// if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
+	// SDL_Flip(screen);
 }
 
 /**
@@ -501,9 +501,9 @@ void FCEUI_SetAviDisableMovieMessages(bool disable) {
 //clear all screens (for multiple-buffering)
 void dingoo_clear_video(void) {
 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-	SDL_Flip(screen);
-	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-	SDL_Flip(screen);
+	// SDL_Flip(screen);
+	// SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
+	// SDL_Flip(screen);
 #ifdef SDL_TRIPLEBUF
 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
 	SDL_Flip(screen);

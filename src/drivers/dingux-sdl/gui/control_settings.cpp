@@ -228,13 +228,13 @@ int RunControlSettings()
 					sprintf(cBtn, "%s", mergeValue ? "on" : "off");
 				}
 				else if (iBtnVal == DefaultGamePad[0][0])
-					sprintf(cBtn, "%s", "GCW_A");
+					sprintf(cBtn, "%s", "RS97_A");
 				else if (iBtnVal == DefaultGamePad[0][1])
-					sprintf(cBtn, "%s", "GCW_B");
+					sprintf(cBtn, "%s", "RS97_B");
 				else if (iBtnVal == DefaultGamePad[0][8])
-					sprintf(cBtn, "%s", "GCW_Y");
+					sprintf(cBtn, "%s", "RS97_X");
 				else if (iBtnVal == DefaultGamePad[0][9])
-					sprintf(cBtn, "%s", "GCW_X");
+					sprintf(cBtn, "%s", "RS97_Y");
 				else
 					sprintf(cBtn, "%s", "<empty>");
 

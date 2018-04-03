@@ -31,6 +31,7 @@
 #include "gui/gui.h"
 
 #include "SDL/SDL.h"
+#include "dma.h"
 #include "dingoo.h"
 #include "dingoo-video.h"
 #include "dummy-netplay.h"
@@ -815,6 +816,7 @@ int main(int argc, char *argv[]) {
 
 	// exit the infrastructure
 	FCEUI_Kill();
+	dma_unmap_buffer();
 	SDL_Quit();
 	return 0;
 }
